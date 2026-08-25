@@ -18,7 +18,7 @@ dev = [
 package = true
 
 [tool.uv.sources]
-trading-types = { git = "https://github.com/SakethThogarucheeti/trading-types.git", tag = "v0.1.0" }
+trading-types = { git = "https://github.com/SakethThogarucheeti/trading-types.git", tag = "v0.1.1" }
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
