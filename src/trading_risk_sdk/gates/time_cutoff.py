@@ -11,6 +11,6 @@ class TimeCutoffGate:
     """Rejects signals submitted after the intraday cutoff time."""
 
     async def check(self, event: SignalEvent, ctx: RiskContext) -> str | None:
-        if ctx.now.time() > ctx.cutoff:
+        if ctx.now_local > ctx.cutoff:
             return _AFTER_CUTOFF
         return None
