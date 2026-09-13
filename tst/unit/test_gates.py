@@ -63,19 +63,25 @@ async def test_circuit_breaker_gate_passes_when_closed(signal_factory, context_f
 
 async def test_daily_loss_gate_rejects_when_limit_exceeded(signal_factory, context_factory) -> None:
     gate = DailyLossGate(enabled=True)
-    ctx = context_factory(max_daily_loss_pct=2.0, realized_pnl=5_000.0)  # limit=2_000
+    ctx = context_factory(max_daily_loss_pct=2.0, realized_pnl=-5_000.0)  # limit=2_000
     assert await gate.check(signal_factory(), ctx) == "DAILY_LOSS_LIMIT"
 
 
 async def test_daily_loss_gate_passes_under_limit(signal_factory, context_factory) -> None:
     gate = DailyLossGate(enabled=True)
-    ctx = context_factory(max_daily_loss_pct=2.0, realized_pnl=500.0)
+    ctx = context_factory(max_daily_loss_pct=2.0, realized_pnl=-500.0)
+    assert await gate.check(signal_factory(), ctx) is None
+
+
+async def test_daily_loss_gate_does_not_reject_on_large_profit(signal_factory, context_factory) -> None:
+    gate = DailyLossGate(enabled=True)
+    ctx = context_factory(max_daily_loss_pct=2.0, realized_pnl=5_000.0)  # limit=2_000
     assert await gate.check(signal_factory(), ctx) is None
 
 
 async def test_daily_loss_gate_disabled_always_passes(signal_factory, context_factory) -> None:
     gate = DailyLossGate(enabled=False)
-    ctx = context_factory(max_daily_loss_pct=2.0, realized_pnl=1_000_000.0)
+    ctx = context_factory(max_daily_loss_pct=2.0, realized_pnl=-1_000_000.0)
     assert await gate.check(signal_factory(), ctx) is None
 
 
