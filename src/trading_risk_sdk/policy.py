@@ -10,9 +10,15 @@ if TYPE_CHECKING:
 
 
 class RiskContext(BaseModel):
-    """Immutable snapshot of all inputs the gate chain needs — pre-fetched before any gate runs."""
+    """
+    Immutable snapshot of all inputs the gate chain needs — pre-fetched before any gate runs.
+
+    ``now`` is always the true UTC instant; ``now_local`` is the wall-clock time in the
+    configured local timezone (e.g. IST) — use ``now_local`` for any cutoff/time-of-day check.
+    """
 
     now: datetime
+    now_local: time
     today: date
     equity: float
     max_daily_loss_pct: float

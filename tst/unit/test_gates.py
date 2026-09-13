@@ -29,13 +29,15 @@ class _Position:
 
 async def test_time_cutoff_gate_rejects_after_cutoff(signal_factory, context_factory) -> None:
     gate = TimeCutoffGate()
-    ctx = context_factory(cutoff=time(9, 0))  # NOW is 10:00, past cutoff
+    ctx = context_factory(cutoff=time(1, 0))  # now_local is 01:30 IST, past cutoff
     assert await gate.check(signal_factory(), ctx) == "AFTER_CUTOFF"
 
 
 async def test_time_cutoff_gate_passes_before_cutoff(signal_factory, context_factory) -> None:
+    # NOW (UTC) is 20:00 -- if the gate mistakenly read ctx.now.time() instead of
+    # ctx.now_local (01:30 IST), a cutoff of 15:30 would incorrectly reject here.
     gate = TimeCutoffGate()
-    ctx = context_factory(cutoff=time(15, 30))  # NOW is 10:00, before cutoff
+    ctx = context_factory(cutoff=time(15, 30))  # now_local is 01:30 IST, before cutoff
     assert await gate.check(signal_factory(), ctx) is None
 
 
